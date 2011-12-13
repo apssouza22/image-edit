@@ -26,6 +26,7 @@
 	*/ 
 
 	require_once(realpath(__DIR__)."/class.facedetect.php");
+	require_once(realpath(__DIR__)."/Color.class.php");
 	
 	
 	class ImageEdit{
@@ -56,6 +57,8 @@
 		private $face;
 
 		private $extension;
+
+		private $pathImage;
 		
 		
 		/** 
@@ -89,6 +92,7 @@
 
 			list($w, $h, $ext) = getimagesize($url);
 			$this->extension = $ext;
+			$this->pathImage = $url;
 
 			// Now you can pass a GD IMage or Imagedit Class to this function!
 			$image = $this->extractImage( $url );
@@ -818,6 +822,73 @@
 			
 			return $this;
 		}
+
+		/**
+		 * Crop image by area selected, used in conjunction with javascript
+		 *
+		 * @param array $arrayAreaSelected a array with position x,y and w,h;
+		 * @param int $wmax width max at moment of crop
+		 * @param int $hmax height max  at moment of crop
+		 */
+		public function cropSelectedArea($arrayAreaSelected,$wmax = null,$hmax = null){
+
+			$arrayAreaSelected = $this->dimensionsBack($arrayAreaSelected, $wmax, $hmax);
+			
+			//AREA SELECTED
+			$posX	= $arrayAreaSelected['x'] ;
+			$posY	= $arrayAreaSelected['y'] ;
+			$widthSelected 	= $arrayAreaSelected['w'];
+			$heightSelected	= $arrayAreaSelected['h'];
+			
+			$newImage = imagecreatetruecolor( $widthSelected , $heightSelected );
+			imageAlphaBlending( $newImage, false);
+
+			imagecopyresampled(
+				$newImage /* Destination */
+				, $this->image /* Source */
+				, 0 /* Dest X */
+				, 0 /* Dest Y */
+				, $posX /* Source X */
+				, $posY /* Source Y */
+				, $widthSelected /* Dest Width */
+				, $heightSelected /* Dest Height */
+				, $widthSelected /* Source Width */
+				, $heightSelected /* Source Height */
+			);
+			unset($this->image);
+
+			$this->image = $newImage;
+			$this->setSize();
+			$this->preserveAlpha();
+
+			return $this;
+		}
+
+		/**
+		 * Back dimensions original of image
+		 * used for fit imagen in screen at moment of crop
+		 * @param array $arrayAreaSelected a array with position x,y and w,h;
+		 * @param int $wmax width max at moment of crop
+		 * @param int $hmax height max  at moment of crop
+		 */
+		private function dimensionsBack($arrayAreaSelected,$wmax=null,$hmax=null)
+		{
+			if($wmax || $hmax)
+			{
+				$wmax	= $wmax ? $wmax : $arrayAreaSelected['w'];
+				$hmax	= $hmax ? $hmax :  $arrayAreaSelected['h'];
+				$scale = max($this->width/$wmax, $this->height/$hmax);
+
+				if($scale > 1)
+				{
+					$posX = $posX * $scale;
+					$posY = $posY * $scale;
+					$arrayAreaSelected['w'] 	= $arrayAreaSelected['w'] * $scale;
+					$arrayAreaSelected['h'] 	= $arrayAreaSelected['h'] * $scale;
+				}
+			}
+			return $arrayAreaSelected;
+		}
 		
 		/** 
 		* Crop the Image to a Face
@@ -1061,5 +1132,87 @@
 				   break;
 			 }
 		}
+
+
+	/**
+	 * (Fast) Detects the background color of this image.
+	 *
+	 * @param int $numberOfSampes Number of detected colors (sorted by the propability).
+	 * @param bool $turboMode Set true to use faster alghoritm (slightly less accurate).
+	 * @return mixed RGB representation of the color, array of samples: array(rgb => propability), or an instance of Color class if one sample selected.
+	 */
+	public function getBackgroundColor($numberOfSamples = 1, $turboMode = false) {
+		$colors = array();
+
+		if($turboMode && ($this->width > 256 || $this->height > 256)) {
+			// create a thumbnail for the computations
+			if($this->width > $this->height) {
+				$ratio = 256 / $this->width;
+				$width = 256;
+				$height = (int)($ratio * $this->width);
+			} else {
+				$ratio = 256 / $this->height;
+				$height = 256;
+				$width = (int)($ratio * $this->width);
+			}
+			$image = imagecreatetruecolor($width, $height);
+			imagecopyresized($image, $this->image, 0, 0, 0, 0, $width, $height, $this->width, $this->height);
+		} else {
+			$image = $this->image;
+			$width = $this->width;
+			$height = $this->height;
+		}
+
+		// this is a quick test only, may be inaccurate
+		// two image samples per one iteration (better performance)
+		for($x = 0; $x < $width; ++$x) {
+			$rgb = imagecolorat($image, $x, 0);
+			if(isset($colors[$rgb])) {
+				++$colors[$rgb];
+			} else {
+				$colors[$rgb] = 1;
+			}
+
+			$rgb = imagecolorat($image, $x, $height - 1);
+			if(isset($colors[$rgb])) {
+				++$colors[$rgb];
+			} else {
+				$colors[$rgb] = 1;
+			}
+		}
+
+		// two image samples per one iteration (better performance)
+		for($y = 0; $y < $height; ++$y) {
+			$rgb = imagecolorat($image, 0, $y);
+
+			if(isset($colors[$rgb])) {
+				++$colors[$rgb];
+			} else {
+				$colors[$rgb] = 1;
+			}
+			$rgb = imagecolorat($image, $width - 1, $y);
+			if(isset($colors[$rgb])) {
+				++$colors[$rgb];
+			} else {
+				$colors[$rgb] = 1;
+			}
+		}
+
+		arsort($colors, SORT_NUMERIC);
+
+
+		if($numberOfSamples === 1) {
+			reset($colors);
+			return new Color(key($colors));
+		}else{
+			$objColors = array();
+			for($i = 0;$i <$numberOfSamples; $i++ ){
+				$objColors[] = new Color(key($colors));
+				next($colors);
+			}
+			return $objColors;
+		}
+
 	}
+}
 ?>
