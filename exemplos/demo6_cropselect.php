@@ -9,14 +9,6 @@
 
 include("../ImageEdit.class.php");
 $image = new ImageEdit('demo_files/flowers.jpg');
-$bg =  $image->getBackgroundColor()->getHexValue();
-$colors = $image->getBackgroundColor(50);
-foreach ($colors as $value)
-{
-	echo "<div style='background:#".$value->getHexValue()."'>";
-	echo "<p>".$value->getHexValue()."</p>";
-	echo "</div>";
-}
 
 
 if ($_SERVER['REQUEST_METHOD']=='POST')
@@ -77,6 +69,8 @@ if ($_SERVER['REQUEST_METHOD']=='POST')
 
 		<!-- This is the image we're attaching Jcrop to -->
 		<img src="demo_files/flowers.jpg" id="cropbox" />
+		Image Croped
+		<img src="crop.jpg" id="" />
 
 		<!-- This is the form that our event handler fills -->
 		<form action="" method="post" onsubmit="return checkCoords();">

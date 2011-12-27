@@ -1135,13 +1135,14 @@
 
 
 	/**
-	 * (Fast) Detects the background color of this image.
+	 * Detects the main color of this image.
 	 *
-	 * @param int $numberOfSampes Number of detected colors (sorted by the propability).
+	 * @param int $numberOfColors Number of colors of  return.
 	 * @param bool $turboMode Set true to use faster alghoritm (slightly less accurate).
-	 * @return mixed RGB representation of the color, array of samples: array(rgb => propability), or an instance of Color class if one sample selected.
+	 * @param bool $tolerance tolerance to colors return
+	 * @return Color $objColor
 	 */
-	public function getBackgroundColor($numberOfSamples = 1, $turboMode = false) {
+	public function getMainColor($numberOfColors = 1, $turboMode = false,$tolerance = 0) {
 		$colors = array();
 
 		if($turboMode && ($this->width > 256 || $this->height > 256)) {
@@ -1201,14 +1202,42 @@
 		arsort($colors, SORT_NUMERIC);
 
 
-		if($numberOfSamples === 1) {
+		if($numberOfColors === 1) {
 			reset($colors);
 			return new Color(key($colors));
 		}else{
 			$objColors = array();
-			for($i = 0;$i <$numberOfSamples; $i++ ){
-				$objColors[] = new Color(key($colors));
-				next($colors);
+			$i = 1;
+			$indice = 0;
+			foreach ($colors as $value) {
+				$indice++;
+				if ($i < $numberOfColors) {
+					if ($indice > 1) {
+						$colorPrev = imagecolorsforindex($this->image, $objColors[$indice]);
+						$color = imagecolorsforindex($this->image, key($colors) );
+
+						$r = $color["red"];
+						$g = $color["green"];
+						$b = $color["blue"];
+
+						$rPrev = $colorPrev["red"];
+						$gPrev = $colorPrev["green"];
+						$bPrev = $colorPrev["blue"];
+
+						if ( ($b > ( $bPrev + $tolerance ) || $b < ( $bPrev + $tolerance ) ) &&
+								($g > ( $gPrev + $tolerance ) || $g > ( $gPrev + $tolerance ) )  &&
+								($r > ( $rPrev + $tolerance ) || $r > ( $rPrev + $tolerance ))){
+							$i++;
+							$objColors[] = new Color(key($colors));
+						}
+
+					}else{
+						$objColors[] = new Color(key($colors));
+					}
+					next($colors);
+				}else{
+					break;
+				}
 			}
 			return $objColors;
 		}

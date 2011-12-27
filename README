@@ -1,0 +1,16 @@
+##Classe de manipulação de imagem
+Essa pacote foi desenvolvida para facilitar o trabalho com imagens utilizando a linguagem PHP. Ele prover métodos que ajudaram a fazer várias coisas comum com imagens no seu sistema, tais como:
+Várias formas de recorte;
+Várias formas de redimensão;
+Várias formas de trabalhar com transparência;
+Rotação;
+Pegar cores predominantes de uma imagem;
+Detectar rosto.
+
+Todos com exemplos.
+
+Vale salientar que esse pacote não é totalmente de minha autoria, mas sim estou ajudando a desenvolver apartir de um projeto do PHPClasses, onde a mesma não tinha repositório no github, nem seu desenvolvedor inicial.
+mas estão nas suas classes, os créditos.
+
+
+

@@ -65,7 +65,7 @@ class Color
 	 * Note: should not be used for performance reasons (reason PHP < 5.4 functions overhead).
 	 * @return int
 	 */
-	public function getRed($rgb) {
+	public function getRed() {
 		return ($this->rgb >> 16) & 0xff;
 	}
 
