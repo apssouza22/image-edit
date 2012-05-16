@@ -55,7 +55,7 @@
 	<?php crop5("portrait.png")?>
 	<img style="border: 1px solid black;" src="data:image/png;base64,<?=base64_encode(crop1("test.png"))?>"></img>
 	<img style="border: 1px solid black;"src="data:image/png;base64,<?=base64_encode(crop2("portrait.png"))?>"></img>
-	<img style="border: 1px solid black;"src="data:image/jpg;base64,<?=base64_encode(crop3("319931_246181618763609_100001153185823_649052_1065711367_n.jpg"))?>"></img>
+	<img style="border: 1px solid black;"src="data:image/jpg;base64,<?=base64_encode(crop3("eu.jpg"))?>"></img>
 	<img style="border: 1px solid black;"src="rosto.png"></img>
-	<img style="border: 1px solid black;"src="data:image/jpg;base64,<?=base64_encode(crop4("test.png"))?>"></img>
+	<img style="border: 1px solid black;"src="data:image/jpg;base64,<?=base64_encode(crop4("eu.jpg"))?>"></img>
 </body>

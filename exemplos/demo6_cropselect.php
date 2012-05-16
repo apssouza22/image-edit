@@ -13,8 +13,8 @@ $image = new ImageEdit('demo_files/flowers.jpg');
 
 if ($_SERVER['REQUEST_METHOD']=='POST')
 {
-	$image->cropSelectedArea($_POST);
-	echo $image->getJPG('crop.jpg');
+	$image->cropSelectedArea($_POST,300,300);
+	$image->getJPG('crop.jpg');
 }
 
 

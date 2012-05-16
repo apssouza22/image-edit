@@ -56,7 +56,7 @@
 		// Only check for a face once because very slow
 		private $face;
 
-		private $extension;
+		public $extension;
 
 		private $pathImage;
 		
@@ -831,8 +831,10 @@
 		 * @param int $hmax height max  at moment of crop
 		 */
 		public function cropSelectedArea($arrayAreaSelected,$wmax = null,$hmax = null){
-
-			$arrayAreaSelected = $this->dimensionsBack($arrayAreaSelected, $wmax, $hmax);
+			
+			if($this->width > $wmax || $this->height > $hmax ){
+				$arrayAreaSelected = $this->dimensionsBack($arrayAreaSelected, $wmax, $hmax);
+			}
 			
 			//AREA SELECTED
 			$posX	= $arrayAreaSelected['x'] ;
@@ -878,13 +880,14 @@
 				$wmax	= $wmax ? $wmax : $arrayAreaSelected['w'];
 				$hmax	= $hmax ? $hmax :  $arrayAreaSelected['h'];
 				$scale = max($this->width/$wmax, $this->height/$hmax);
-
+				
+				
 				if($scale > 1)
 				{
-					$posX = $posX * $scale;
-					$posY = $posY * $scale;
-					$arrayAreaSelected['w'] 	= $arrayAreaSelected['w'] * $scale;
-					$arrayAreaSelected['h'] 	= $arrayAreaSelected['h'] * $scale;
+					$arrayAreaSelected['x'] = $arrayAreaSelected['x'] * $scale;
+					$arrayAreaSelected['y']	= $arrayAreaSelected['y'] * $scale;
+					$arrayAreaSelected['w'] = $arrayAreaSelected['w'] * $scale;
+					$arrayAreaSelected['h'] = $arrayAreaSelected['h'] * $scale;
 				}
 			}
 			return $arrayAreaSelected;
@@ -984,6 +987,14 @@
 		*/ 
 		public function setHeight( $height , $preserveRatio = false )
 		{
+			if(!$height){
+				return $this;
+			}
+			
+			if($height > $this->height){
+				return $this;
+			}
+			
 			if( ! $this->isLoaded() )
 				return false;
 				
@@ -1017,6 +1028,25 @@
 		}
 		
 		/** 
+		* Resize the Image by setting it's Width and Height preseve ratio e 
+		 * choosing the largest dimension
+		* 
+		* @param Integer $width The Width of the Output-Image
+		* @param Boolean $height The Height of the Output-Image
+		*/ 
+		public function setDimensions($width, $height)
+		{
+			$scaleW = $this->width/$width;
+			$scaleH = $this->height/$height;
+			
+			if($scaleH > $scaleW){
+				$this->setHeight($height, true );
+			}else{
+				$this->setWidth($width, true );
+			}
+		}
+		
+		/** 
 		* Resize the Image by setting it's Width
 		* 
 		* @param Integer $width The Width of the Output-Image
@@ -1024,6 +1054,14 @@
 		*/ 
 		public function setWidth( $width , $preserveRatio = false )
 		{
+			if(!$width){
+				return $this;
+			}
+			
+			if($width > $this->width){
+				return $this;
+			}
+			
 			if( ! $this->isLoaded() )
 				return false;
 				
@@ -1123,7 +1161,7 @@
 						return $this->getGIF($new_img);
 				   break;
 
-					case 1:
+					case 2:
 						return $this->getJPG($new_img);
 				   break;
 

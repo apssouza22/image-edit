@@ -1,5 +1,5 @@
 <?php 	
-	include("ImageEdit.class.php");
+	include("../ImageEdit.class.php");
 	function set($url)
 	{
 		$image = new ImageEdit($url);
