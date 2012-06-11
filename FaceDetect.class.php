@@ -19,7 +19,7 @@
 // @Contributor Maurice Svay
 //              maurice@svay.Com
  
-class faceDetect {
+class FaceDetect {
  
     protected $detection_data;
     protected $canvas;

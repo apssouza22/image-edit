@@ -25,7 +25,7 @@
 	* 
 	*/ 
 
-	require_once(realpath(__DIR__)."/class.facedetect.php");
+	require_once(realpath(__DIR__)."/FaceDetect.class.php");
 	require_once(realpath(__DIR__)."/Color.class.php");
 	
 	
@@ -167,7 +167,7 @@
 			if( $this->face != null)
 				return ( $this->face != false );
 			
-			$detector = new faceDetect('detection.dat');
+			$detector = new FaceDetect('detection.dat');
 			if( $detector->face_detect($this->image) ){
 				//echo "hallo";
 				$this->face = $detector->getFace();
@@ -893,6 +893,14 @@
 			return $arrayAreaSelected;
 		}
 		
+		
+		public function getFace(){
+			if( $this->hasFace()){
+				return $this->face;
+			}
+			return false;
+		}
+		
 		/** 
 		* Crop the Image to a Face
 		* 
@@ -903,7 +911,7 @@
 			if( ! $this->isLoaded() )
 				return false;
 				
-			if( $this->hasFace() ){
+			if( $this->hasFace()){
 				$faceData = $this->face;
 				$Fx = intval($faceData['x']);
 				$Fy = intval($faceData['y']);
