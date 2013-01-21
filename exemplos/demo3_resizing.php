@@ -1,5 +1,5 @@
 <?php 	
-	include("../ImageEdit.class.php");
+	include("../ImageEdit.php");
 	
 		$image = new ImageEdit("mask.png");
 		$image->setHeight(

@@ -3,7 +3,7 @@ include("../FaceDetect.class.php");
 include("../ImageEdit.class.php");
 
 /*
-$imageSource = imagecreatefromstring(file_get_contents("portrait.png"));
+$imageSource = imagecreatefromstring(file_get_contents("eu.jpg"));
 $detector = new FaceDetect('detection.dat');
 if ($detector->face_detect($imageSource)) {
 	$face = $detector->getFace();
@@ -11,9 +11,9 @@ if ($detector->face_detect($imageSource)) {
 */
 
 //croping image
-$image = new ImageEdit("portrait.png");
+$image = new ImageEdit("eu.jpg");
 $image->cropFace( true /* Optional: Preserve Aspect Ratio */);
-$image->getOutputImage('cropFace.png');
+$image->getOutputImage('cropFace.jpg');
 
 $face  = $image->getFace();
 ?>
@@ -35,7 +35,7 @@ $face  = $image->getFace();
 					<!-- This is the image we're attaching Jcrop to -->
 					<div style="position:relative;">
 						<div style="height: <?= $face['w'] ?>px;left: <?= $face['x'] ?>px;    position: absolute;    top: <?= $face['y'] ?>px;    width: <?= $face['w'] ?>px;    z-index: 300; border:2px solid #000;"></div>
-						<img src="portrait.png" id="cropbox" />
+						<img src="eu.jpg" id="cropbox" />
 					</div>
 
 				</div>
@@ -44,7 +44,7 @@ $face  = $image->getFace();
 			<div class="jcExample">
 				<div class="article">
 					<h3>Face crop</h3>
-						<img src="cropFace.png" id="cropbox" />
+						<img src="cropFace.jpg" id="cropbox" />
 				</div>
 			</div>
 			
