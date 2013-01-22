@@ -1,5 +1,5 @@
 # Classe de manipulação de imagem
-Essa pacote foi desenvolvida para facilitar o trabalho com imagens utilizando a linguagem PHP. Ele prover métodos que ajudaram a fazer várias coisas comum com imagens no seu sistema, tais como:
+Esse pacote foi desenvolvido para facilitar o trabalho com imagens utilizando a linguagem PHP. Ele prover métodos que facilita o trabalho com imagens no seu sistema, tais como:
 
 * Detectar rosto.
 * Várias formas de recorte;
