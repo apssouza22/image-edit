@@ -976,19 +976,34 @@ class ImageEdit
 	}
 
 	/**
+	 * Adjusting the image to the size reported, if the image is smaller, performs stretching
+	 * @param int $width new width to image
+	 * @param int $height new height to image
+	 */
+	public function stretch($width, $height)
+	{
+		$this->setHeight($height, false, true)
+				->setWidth($width, false, true);
+		return $this;
+	}
+
+	/**
 	 * Resize the Image by setting it's Height
 	 * 
 	 * @param Integer $height The Height of the Output-Image
 	 * @param Boolean $preserveRatio Should the Image Preserve its Ratio?
+	 * @param Boolean $stretch Should the Image stretch?
 	 */
-	public function setHeight($height, $preserveRatio = false)
+	public function setHeight($height, $preserveRatio = false, $stretch = false)
 	{
 		if (!$height) {
 			return $this;
 		}
 
-		if ($height > $this->height) {
-			return $this;
+		if (!$stretch) {
+			if ($height > $this->height) {
+				return $this;
+			}
 		}
 
 		if (!$this->isLoaded())
@@ -1044,33 +1059,32 @@ class ImageEdit
 			}
 			return $this;
 		}
-		
+
 		if ($scaleH < $scaleW) {
 			$this->setHeight($height, true);
 		} else {
 			$this->setWidth($width, true);
 		}
 		return $this;
-		
 	}
-	
-	
-	public function resizeAndCrop($wmax, $hmax){
+
+	public function resizeAndCrop($wmax, $hmax)
+	{
 		$this->setDimensions($wmax, $hmax);
-		$x= $y = 0;
-		
-		if($this->width > $this->height){
+		$x = $y = 0;
+
+		if ($this->width > $this->height) {
 			$x = floor($this->width / 2);
 			$halfW = floor($wmax / 2);
 			$x = $x - $halfW;
 		}
-		
-		if($this->width < $this->height){
+
+		if ($this->width < $this->height) {
 			$y = floor($this->height / 2);
 			$halfH = floor($hmax / 2);
 			$y = $y - $halfH;
 		}
-		
+
 		$this->crop($x, $y, $wmax, $hmax);
 		return $this;
 	}
@@ -1080,15 +1094,18 @@ class ImageEdit
 	 * 
 	 * @param Integer $width The Width of the Output-Image
 	 * @param Boolean $preserveRatio Should the Image Preserve its Ratio?
+	 * @param Boolean $stretch Should the Image stretch?
 	 */
-	public function setWidth($width, $preserveRatio = false)
+	public function setWidth($width, $preserveRatio = false, $stretch = false)
 	{
 		if (!$width) {
 			return $this;
 		}
 
-		if ($width > $this->width) {
-			return $this;
+		if (!$stretch) {
+			if ($width > $this->width) {
+				return $this;
+			}
 		}
 
 		if (!$this->isLoaded())
@@ -1154,9 +1171,9 @@ class ImageEdit
 
 		ob_start();
 		if ($new_img)
-			imagejpeg($this->image, $new_img,100);
+			imagejpeg($this->image, $new_img, 100);
 		else
-			imagejpeg($this->image,null,100);
+			imagejpeg($this->image, null, 100);
 		$data = ob_get_contents();
 		ob_end_clean();
 		return $data;
