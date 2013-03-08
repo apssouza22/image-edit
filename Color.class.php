@@ -13,9 +13,9 @@
  * @license    GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
  * @version    1.0.0
  */
-
 class Color
 {
+
 	const RED = 1;
 	const GREEN = 2;
 	const BLUE = 4;
@@ -50,8 +50,9 @@ class Color
 	 * @param mixed $blueValue Blue value (if $rgbOrRedValue does not contain entire RGB value)
 	 * @return Color
 	 */
-	public function __construct($rgbOrRedValue, $greenValue = null, $blueValue = null) {
-		if($greenValue === null && $blueValue === null) {
+	public function __construct($rgbOrRedValue, $greenValue = null, $blueValue = null)
+	{
+		if ($greenValue === null && $blueValue === null) {
 			$this->rgb = $rgbOrRedValue;
 			return;
 		}
@@ -60,12 +61,31 @@ class Color
 	}
 
 	/**
+	 * Convert hexa for RGB
+	 * @param String $color color hexadecimal
+	 * @return Object instance of Color
+	 * */
+	public static function createByHexadecimal($color)
+	{
+		$color = str_replace('#', '', $color);
+
+		if (strlen($color) == 3)
+			$color .= $color; // #fff, #000 etc.
+		
+		return new self(hexdec(substr($color, 0, 2)), hexdec(substr($color, 2, 2)), 
+						hexdec(substr($color, 4, 2)) );
+	}
+
+// fim hexa
+
+	/**
 	 * Calculates a value of a red component of the RGB value.
 	 *
 	 * Note: should not be used for performance reasons (reason PHP < 5.4 functions overhead).
 	 * @return int
 	 */
-	public function getRed() {
+	public function getRed()
+	{
 		return ($this->rgb >> 16) & 0xff;
 	}
 
@@ -75,7 +95,8 @@ class Color
 	 * Note: should not be used for performance reasons (reason PHP < 5.4 functions overhead).
 	 * @return int
 	 */
-	public function getGreen() {
+	public function getGreen()
+	{
 		return ($this->rgb >> 8) & 0xff;
 	}
 
@@ -85,7 +106,8 @@ class Color
 	 * Note: should not be used for performance reasons (reason PHP < 5.4 functions overhead).
 	 * @return int
 	 */
-	public function getBlue() {
+	public function getBlue()
+	{
 		return $this->rgb & 0xff;
 	}
 
@@ -94,18 +116,21 @@ class Color
 	 *
 	 * @return float
 	 */
-	public function getChroma() {
+	public function getChroma()
+	{
 		$r = ($this->rgb >> 16) & 0xff;
 		$g = ($this->rgb >> 8) & 0xff;
 		$r = $this->rgb & 0xff;
 		return (max($r, $g, $b) - min($r, $g, $b)) / 255;
 	}
+
 	/**
 	 * Returns color hue.
 	 *
 	 * @return int Value in degrees (0 => 360).
 	 */
-	public function getHue() {
+	public function getHue()
+	{
 		$r = (($rgb >> 16) & 0xff) / 255;
 		$g = (($rgb >> 8) & 0xff) / 255;
 		$b = ($rgb & 0xff) / 255;
@@ -119,27 +144,28 @@ class Color
 	 * @param int $colorMode Color mode for saturation (use Color::HSV, Color::HSI or Color::HSL as the value), default is Color::HSL
 	 * @return float
 	 */
-	public function getSaturation($colorMode = self::HSL) {
+	public function getSaturation($colorMode = self::HSL)
+	{
 		$r = (($this->rgb >> 16) & 0xff) / 255;
 		$g = (($this->rgb >> 8) & 0xff) / 255;
 		$b = ($this->rgb & 0xff) / 255;
 		$max = max($r, $g, $b);
 		$min = min($r, $g, $b);
-		if($max === 0) {
+		if ($max === 0) {
 			return 0;
 		}
-		if($colorMode === self::HSL) {
+		if ($colorMode === self::HSL) {
 			$diff = $max - $min;
 			//$luminance = ($max + $min) / 2;
-			if($diff < 0.5) {
+			if ($diff < 0.5) {
 				return $diff / ($max + $min);
 			} else {
 				return $diff / (2 - $max - $min);
 			}
-		} else if($colorMode === self::HSV) {
+		} else if ($colorMode === self::HSV) {
 			return ($max - $min) / $max;
-		} else if($colorMode === self::HSI) {
-			if($max - $min === 0) {
+		} else if ($colorMode === self::HSI) {
+			if ($max - $min === 0) {
 				return 0;
 			} else {
 				return 1 - $min / (($r + $g + $b) / 3);
@@ -154,7 +180,8 @@ class Color
 	 *
 	 * @return string
 	 */
-	public function getHexValue() {
+	public function getHexValue()
+	{
 		return str_pad(dechex($this->rgb), 6, '0', STR_PAD_LEFT);
 	}
 
@@ -164,7 +191,8 @@ class Color
 	 * @param int $mode Luminance mode: 0 = fastest, 1 = Digital CCIR601, 2 = Digital ITU-R, 3 = HSP (best quality), Color::HSL = HSL (default), Color::HSV = HSV
 	 * @return float
 	 */
-	public function getLuminance($mode = self::HSL) {
+	public function getLuminance($mode = self::HSL)
+	{
 		$r = ($this->rgb >> 16) & 0xff;
 		$g = ($this->rgb >> 8) & 0xff;
 		$b = $this->rgb & 0xff;
@@ -176,11 +204,11 @@ class Color
 				break;
 			case 1:
 				// Digital CCIR601
-				return (int)(0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+				return (int) (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
 				break;
 			case 2:
 				// Ditigal ITU-R
-				return (int)(0.2126 * $r + 0.7152 * $g + 0.0722 * $b) / 255;
+				return (int) (0.2126 * $r + 0.7152 * $g + 0.0722 * $b) / 255;
 				break;
 			case 3:
 				// HSP algorithm
@@ -203,5 +231,7 @@ class Color
 				break;
 		}
 	}
+
 }
+
 ?>

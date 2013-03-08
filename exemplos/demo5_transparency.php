@@ -18,6 +18,7 @@
 		
 		return $image->getPNG();
 	}
+	
 	function original($url){
 		$image = new ImageEdit($url);
 		$image
