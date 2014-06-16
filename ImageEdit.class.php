@@ -1072,7 +1072,9 @@ class ImageEdit
 	{
 		$this->setDimensions($wmax, $hmax);
 		$x = $y = 0;
-
+        
+        
+        
 		if ($this->width > $this->height) {
 			$x = floor($this->width / 2);
 			$halfW = floor($wmax / 2);
@@ -1084,6 +1086,16 @@ class ImageEdit
 			$halfH = floor($hmax / 2);
 			$y = $y - $halfH;
 		}
+        
+        //if minor not crop
+        if($this->width < $wmax){
+            $wmax = $this->width;
+            $x = $y = 0;
+        }
+        if($this->height < $hmax){
+            $hmax = $this->height;
+            $x = $y = 0;
+        }
 
 		$this->crop($x, $y, $wmax, $hmax);
 		return $this;
