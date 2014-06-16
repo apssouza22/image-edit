@@ -2,7 +2,7 @@
 	include("../ImageEdit.class.php");
 	
 	/*Crop the Image*/
-	function crop1($url)
+	function crop1($url=null)
 	{
 		$image = new ImageEdit($url);
 		$image->crop( 
@@ -44,7 +44,7 @@
 		$image->autoCrop();
 		return $image->getOutputImage();
 	}
-	
+	crop1();
 ?>
 <body style="background: yellow;">
 	<h1>Imagedit Demo 2: Cropping</h1>

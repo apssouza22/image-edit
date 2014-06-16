@@ -37,7 +37,6 @@ class ImageEdit
 	 * 
 	 * @var image Resource 
 	 * @access private 
-	 * @see loadFile() 
 	 */
 	private $image;
 
@@ -77,20 +76,43 @@ class ImageEdit
 	}
 
 	/**
+	 * Create new Image empty 
+	 * @param Integer $width 
+	 * @param Integer $height
+	 * @param string $hexcolor string hexadecimal 
+	 * @return Object current instance 
+	 * */
+	public function createEmptyimage($width, $height, $hexColor = "ffffff")
+	{
+		$oColor = Color::createByHexadecimal($hexColor);
+		$this->image = imagecreatetruecolor($width, $height);
+		$background = imagecolorallocate($this->image, $oColor->getRed(), $oColor->getGreen(), $oColor->getBlue());
+		imagefill($this->image, 0, 0, $background);
+		$this->extension = 'jpg';
+		$this->setSize();
+		return $this;
+	}
+
+	/**
 	 * Set The Image
 	 *
 	 * @param String $url File to load
 	 */
 	public function setImage($url)
 	{
+		if (!$url)
+			return false;
+
 		// To Be sure
 		unset($this->image);
 		$this->image = null;
-
-		list($w, $h, $ext) = getimagesize($url);
-		$this->extension = $ext;
-		$this->pathImage = $url;
-
+		
+		if (is_object($url) && get_class($url) == __CLASS__){
+			list($w, $h, $ext) = getimagesize($url);
+			$this->extension = $ext;
+			$this->pathImage = $url;
+		}
+		
 		// Now you can pass a GD IMage or Imagedit Class to this function!
 		$image = $this->extractImage($url);
 
@@ -244,7 +266,7 @@ class ImageEdit
 	private function extractImage($image)
 	{
 		// Imagedit Class
-		if (is_object($image) && get_class($image) == "ImageEdit")
+		if (is_object($image) && get_class($image) == __CLASS__)
 			return $image->getImage();
 		// GD Image
 		elseif (@imagesx($image) > 0)
@@ -1068,6 +1090,11 @@ class ImageEdit
 		return $this;
 	}
 
+	/**
+	 * Resize preserving Ratio and crop the rest
+	 * @param Integer $width The Width of the Output-Image
+	 * @param Integer $height The Height of the Output-Image
+	 * */
 	public function resizeAndCrop($wmax, $hmax)
 	{
 		$this->setDimensions($wmax, $hmax);
