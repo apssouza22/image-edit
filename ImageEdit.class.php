@@ -891,12 +891,13 @@ class ImageEdit
 			$hmax = $hmax ? $hmax : $arrayAreaSelected['h'];
 			$scale = min($this->width / $wmax, $this->height / $hmax);
 
-			if ($scale > 1) {
-				$arrayAreaSelected['x'] = $arrayAreaSelected['x'] * $scale;
-				$arrayAreaSelected['y'] = $arrayAreaSelected['y'] * $scale;
-				$arrayAreaSelected['w'] = $arrayAreaSelected['w'] * $scale;
-				$arrayAreaSelected['h'] = $arrayAreaSelected['h'] * $scale;
+			if ($scale < 1) {
+                $scale = max($this->width / $wmax, $this->height / $hmax);
 			}
+            $arrayAreaSelected['x'] = $arrayAreaSelected['x'] * $scale;
+            $arrayAreaSelected['y'] = $arrayAreaSelected['y'] * $scale;
+            $arrayAreaSelected['w'] = $arrayAreaSelected['w'] * $scale;
+            $arrayAreaSelected['h'] = $arrayAreaSelected['h'] * $scale;
 		}
 		return $arrayAreaSelected;
 	}
